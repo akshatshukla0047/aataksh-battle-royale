@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AATAKSH — 3D Battle Royale Shooting Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Three.js 3D Engine -->
+    <script src="libs/three.min.js"></script>
+</head>
+<body>
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Red Damage Flash & Storm Vignettes -->
+    <div id="damage-vignette"></div>
+    <div id="storm-vignette"></div>
+
+    <!-- Floating 3D World Damage Numbers -->
+    <div id="world-damage-container"></div>
+
+    <!-- ==============================================================
+         1. MAIN MENU
+         ============================================================== -->
+    <div id="main-menu">
+        <div class="menu-header">
+            <div class="logo-container">
+                <h1 class="logo-title">AATAKSH</h1>
+                <span class="logo-sub">TACTICAL BATTLE ROYALE</span>
+            </div>
+            <div class="menu-header-badge">
+                <span style="color: var(--primary); font-family: var(--font-heading); font-size: 14px; letter-spacing: 2px;">
+                    SEASON 1: APEX ISLE
+                </span>
+            </div>
+        </div>
+
+        <div class="menu-center">
+            <button id="btn-play" class="btn-tactical btn-primary-play">
+                <span>ENTER BATTLEGROUND</span>
+            </button>
+            <button id="btn-characters" class="btn-tactical">
+                <span>OPERATIVES</span>
+            </button>
+            <button id="btn-settings" class="btn-tactical">
+                <span>SETTINGS</span>
+            </button>
+            <button id="btn-controls" class="btn-tactical">
+                <span>CONTROLS</span>
+            </button>
+        </div>
+
+        <div class="menu-footer">
+            <span>SURVIVE. LOOT. ELIMINATE. BECOME THE LAST SURVIVOR.</span>
+            <span>AATAKSH v1.0.0 — PC & ANDROID READY</span>
+        </div>
+    </div>
+
+    <!-- ==============================================================
+         2. CHARACTER SELECT MODAL
+         ============================================================== -->
+    <div id="character-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 class="modal-title">SELECT YOUR OPERATIVE</h2>
+            <div class="character-cards-row">
+                <!-- AKSHAT -->
+                <div id="card-akshat" class="char-select-card selected">
+                    <div class="char-card-header">
+                        <span class="char-name">AKSHAT</span>
+                        <span class="char-badge badge-speed">SPEED SPECIALIST</span>
+                    </div>
+                    <p class="char-desc">
+                        Athletic male operative wearing a modern dark tactical jacket, black cargo utility pants, and combat boots. Swift and lethal with assault rifles.
+                    </p>
+                    <div class="ability-box">
+                        <div class="ability-title">⚡ ADRENALINE RUSH</div>
+                        <div class="ability-detail">+65% Movement speed burst for 8 seconds. Evade storm zones and flank rivals with blistering speed.</div>
+                    </div>
+                </div>
+
+                <!-- AKSHITA -->
+                <div id="card-akshita" class="char-select-card">
+                    <div class="char-card-header">
+                        <span class="char-name">AKSHITA</span>
+                        <span class="char-badge badge-shield">DEFENSE SPECIALIST</span>
+                    </div>
+                    <p class="char-desc">
+                        Athletic female operative equipped with high-tech tactical armor in a striking black and crimson red color theme. Built to withstand heavy crossfire.
+                    </p>
+                    <div class="ability-box">
+                        <div class="ability-title">🛡️ TITAN SHIELD</div>
+                        <div class="ability-detail">Deploy a hexagonal forcefield barrier that absorbs 75% of incoming bullet damage for 8 seconds.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================================
+         3. SETTINGS MODAL
+         ============================================================== -->
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 class="modal-title">SYSTEM SETTINGS</h2>
+            <div class="settings-group">
+                <div class="setting-row">
+                    <label for="setting-sens">Aim Sensitivity</label>
+                    <input type="range" id="setting-sens" min="0.001" max="0.005" step="0.0002" value="0.0022">
+                </div>
+                <div class="setting-row">
+                    <label for="setting-volume">Master SFX Volume</label>
+                    <input type="range" id="setting-volume" min="0" max="1" step="0.05" value="0.8">
+                </div>
+                <div class="setting-row">
+                    <label for="setting-touch">Enable Mobile Touch Controls</label>
+                    <input type="checkbox" id="setting-touch">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================================
+         4. CONTROLS GUIDE MODAL
+         ============================================================== -->
+    <div id="controls-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 class="modal-title">TACTICAL CONTROLS GUIDE</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 16px;">
+                <div>
+                    <h3 style="color: var(--primary); margin-bottom: 10px; font-family: var(--font-heading);">PC KEYBOARD & MOUSE</h3>
+                    <p>• <b>W, A, S, D</b> — Move Operative</p>
+                    <p>• <b>Shift</b> — Tactical Sprint</p>
+                    <p>• <b>Space</b> — Jump</p>
+                    <p>• <b>C</b> — Crouch / Duck Cover</p>
+                    <p>• <b>Left Click</b> — Fire Weapon</p>
+                    <p>• <b>Right Click</b> — Aim Down Sights (ADS Zoom / Sniper Scope)</p>
+                    <p>• <b>R</b> — Reload Weapon</p>
+                    <p>• <b>1, 2, 3, 4</b> — Switch Weapon Slots</p>
+                    <p>• <b>G</b> — Throw Frag Grenade</p>
+                    <p>• <b>E</b> — Activate Hero Ability</p>
+                    <p>• <b>F</b> — Loot Items & Open Crates</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--gold); margin-bottom: 10px; font-family: var(--font-heading);">MOBILE / TOUCH CONTROLS</h3>
+                    <p>• <b>Left Virtual Joystick</b> — Move & Sprint</p>
+                    <p>• <b>Right Swipe Area</b> — Look & Aim</p>
+                    <p>• <b>FIRE Button</b> — Shoot</p>
+                    <p>• <b>AIM Button</b> — Scope Zoom</p>
+                    <p>• <b>JUMP / CROUCH</b> — Mobility</p>
+                    <p>• <b>ABILITY Icon</b> — Trigger Hero Power</p>
+                    <p>• <b>MEDKIT Icon</b> — Restore +50 HP</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================================
+         5. IN-GAME TACTICAL HUD
+         ============================================================== -->
+    <div id="game-hud" class="hidden">
+        <!-- Top Compass -->
+        <div class="hud-top-compass">
+            <div class="compass-center-marker"></div>
+            <div id="compass-degree">0°</div>
+            <div class="compass-strip" id="compass-tape">
+                <span>N</span><span>15</span><span>30</span><span>NE</span><span>60</span><span>75</span>
+                <span>E</span><span>105</span><span>120</span><span>SE</span><span>150</span><span>165</span>
+                <span>S</span><span>195</span><span>210</span><span>SW</span><span>240</span><span>255</span>
+                <span>W</span><span>285</span><span>300</span><span>NW</span><span>330</span><span>345</span>
+                <span>N</span>
+            </div>
+        </div>
+
+        <!-- Minimap Radar Top-Left -->
+        <div class="hud-minimap-container">
+            <canvas id="minimap-canvas"></canvas>
+        </div>
+
+        <!-- Top Right Match Stats -->
+        <div class="hud-top-stats">
+            <div class="hud-stat-badge storm">
+                <span>ZONE:</span>
+                <span id="storm-timer">SAFE (45s)</span>
+            </div>
+            <div class="hud-stat-badge alive">
+                <span>ALIVE:</span>
+                <span id="alive-count">20</span>
+            </div>
+            <div class="hud-stat-badge kills">
+                <span>KILLS:</span>
+                <span id="kill-count">0</span>
+            </div>
+            <div class="hud-stat-badge" style="color: #fff;">
+                <span id="match-timer">00:00</span>
+            </div>
+        </div>
+
+        <!-- Kill Feed -->
+        <div id="kill-feed"></div>
+
+        <!-- Center Crosshair Reticle -->
+        <div class="reticle-crosshair">
+            <div class="reticle-dot"></div>
+            <div class="reticle-line top"></div>
+            <div class="reticle-line bottom"></div>
+            <div class="reticle-line left"></div>
+            <div class="reticle-line right"></div>
+        </div>
+
+        <!-- Hitmarker -->
+        <div id="hitmarker"></div>
+
+        <!-- Sniper Scope Overlay -->
+        <div id="sniper-scope-overlay">
+            <div class="scope-crosshair-h"></div>
+            <div class="scope-crosshair-v"></div>
+        </div>
+
+        <!-- Loot Prompt -->
+        <div id="loot-prompt">
+            <span class="key-pill">F</span> Take AK-47
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-notice"></div>
+
+        <!-- Bottom-Left Health & Armor Bars -->
+        <div class="hud-bottom-left">
+            <div class="hud-bar-container">
+                <div class="hud-bar-fill fill-health" id="health-fill"></div>
+                <div class="hud-bar-text" id="health-text">100 / 100</div>
+            </div>
+            <div class="hud-bar-container">
+                <div class="hud-bar-fill fill-armor" id="armor-fill"></div>
+                <div class="hud-bar-text" id="armor-text">50 / 100</div>
+            </div>
+        </div>
+
+        <!-- Bottom-Right Weapon HUD & Hotbar -->
+        <div class="hud-bottom-right">
+            <!-- Action buttons (Ability & Medkit) -->
+            <div class="hud-action-widgets">
+                <div class="hud-action-circle" id="hud-ability-btn" title="Hero Ability [E]">
+                    <span>⚡</span>
+                    <span class="action-label">ABILITY</span>
+                    <div id="ability-cd-overlay"></div>
+                </div>
+                <div class="hud-action-circle" id="hud-heal-btn" title="First Aid Medkit [+50 HP]">
+                    <span>🩹</span>
+                    <span class="action-label" id="medkit-count">2</span>
+                </div>
+            </div>
+
+            <!-- Active Weapon Card -->
+            <div class="hud-weapon-card">
+                <div id="weapon-name">AK-47 Tactical</div>
+                <div class="hud-ammo-row">
+                    <span id="ammo-clip">30</span>
+                    <span id="ammo-reserve">/ 90</span>
+                </div>
+                <div class="hud-weapon-slots">
+                    <div class="hud-slot-btn active" id="hud-slot-1">1: RIFLE</div>
+                    <div class="hud-slot-btn" id="hud-slot-2">2: SPECIAL</div>
+                    <div class="hud-slot-btn" id="hud-slot-3">3: PISTOL</div>
+                    <div class="hud-slot-btn" id="hud-slot-4">4: GRENADE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================================
+         6. TOUCH CONTROLS FOR MOBILE / ANDROID
+         ============================================================== -->
+    <div id="touch-controls-container">
+        <!-- Virtual Joystick for Movement -->
+        <div id="touch-stick-base">
+            <div id="touch-stick-thumb"></div>
+        </div>
+
+        <!-- Look & Aim Swipe Area -->
+        <div id="touch-look-area"></div>
+
+        <!-- Mobile Touch Action Buttons -->
+        <div class="touch-btn" id="touch-btn-fire">FIRE</div>
+        <div class="touch-btn" id="touch-btn-aim">AIM</div>
+        <div class="touch-btn" id="touch-btn-jump">JUMP</div>
+        <div class="touch-btn" id="touch-btn-crouch">DUCK</div>
+        <div class="touch-btn" id="touch-btn-reload">RELOAD</div>
+        <div class="touch-btn" id="touch-btn-loot">LOOT</div>
+    </div>
+
+    <!-- ==============================================================
+         7. VICTORY SCREEN ("BOOYAH!")
+         ============================================================== -->
+    <div id="victory-screen" class="end-screen hidden">
+        <h1 class="vic-banner">BOOYAH!</h1>
+        <h2 class="end-subtitle">#1 / 20 — BATTLE ROYALE CHAMPION</h2>
+        <div class="end-stats-card">
+            <div class="end-stat-col">
+                <span class="end-stat-num" id="vic-kills">0</span>
+                <span class="end-stat-label">KILLS</span>
+            </div>
+            <div class="end-stat-col">
+                <span class="end-stat-num" id="vic-dmg">0</span>
+                <span class="end-stat-label">DAMAGE DEALT</span>
+            </div>
+            <div class="end-stat-col">
+                <span class="end-stat-num" id="vic-time">0:00</span>
+                <span class="end-stat-label">SURVIVAL TIME</span>
+            </div>
+            <div class="end-stat-col">
+                <span class="end-stat-num" id="vic-score" style="color: var(--gold);">0</span>
+                <span class="end-stat-label">MATCH SCORE</span>
+            </div>
+        </div>
+        <button id="btn-restart-victory" class="btn-tactical btn-primary-play">
+            <span>PLAY AGAIN</span>
+        </button>
+    </div>
+
+    <!-- ==============================================================
+         8. DEFEAT SCREEN ("ELIMINATED")
+         ============================================================== -->
+    <div id="defeat-screen" class="end-screen hidden">
+        <h1 class="def-banner">ELIMINATED</h1>
+        <h2 class="end-subtitle" id="def-rank">#0 / 20</h2>
+        <p style="color: #aaa; margin-bottom: 25px; font-size: 18px;">
+            Eliminated by <b id="def-killer" style="color: #ff3344;">Enemy Operative</b>
+        </p>
+        <div class="end-stats-card">
+            <div class="end-stat-col">
+                <span class="end-stat-num" id="def-kills">0</span>
+                <span class="end-stat-label">KILLS</span>
+            </div>
+            <div class="end-stat-col">
+                <span class="end-stat-num" id="def-dmg">0</span>
+                <span class="end-stat-label">DAMAGE DEALT</span>
+            </div>
+        </div>
+        <button id="btn-restart-defeat" class="btn-tactical btn-primary-play">
+            <span>PLAY AGAIN</span>
+        </button>
+    </div>
+
+    <!-- ==============================================================
+         GAME ENGINE SCRIPTS
+         ============================================================== -->
+    <script src="js/audio.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/weapons.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/safezone.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
